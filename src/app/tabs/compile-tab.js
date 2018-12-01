@@ -140,8 +140,8 @@ module.exports = class CompileTab {
         self._deps.renderer.error(data['error'].formattedMessage, self._view.errorContainer, {type: data['error'].severity || 'error'})
         if (data['error'].mode === 'panic') {
           return modalDialogCustom.alert(yo`<div><i class="fa fa-exclamation-circle ${css.panicError}" aria-hidden="true"></i>
-                                            The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br> 
-                                            The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet. 
+                                            The compiler returned with the following internal error: <br> <b>${data['error'].formattedMessage}.<br>
+                                            The compiler might be in a non-sane state, please be careful and do not use further compilation data to deploy to mainnet.
                                             It is heavily recommended to use another browser not affected by this issue (Firefox is known to not be affected).</b><br>
                                             Please join <a href="https://gitter.im/ethereum/remix" target="blank" >remix gitter channel</a> for more information.</div>`)
         }
@@ -197,14 +197,14 @@ module.exports = class CompileTab {
 
     self._view.versionSelector = yo`
       <select onchange=${onchangeLoadVersion} class="${css.select}" id="versionSelector" disabled>
-        <option disabled selected>Select new compiler version</option>
+        <option disabled selected>选择编译版本</option>
       </select>`
     if (self.data.allversions && self.data.selectedVersion) self._updateVersionSelector()
     self._view.version = yo`<span id="version"></span>`
 
     self._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
-    self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
+    self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} 开始编译</div>`
     self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
     self._view.hideWarningsBox = yo`<input class="${css.autocompile}" onchange=${hideWarnings} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
     if (self.data.autoCompile) self._view.autoCompile.setAttribute('checked', '')
@@ -220,15 +220,15 @@ module.exports = class CompileTab {
             <div class=${css.checkboxes}>
               <div class="${css.autocompileContainer}">
                 ${self._view.autoCompile}
-                <span class="${css.autocompileText}">Auto compile</span>
+                <span class="${css.autocompileText}">自动编译</span>
               </div>
               <div class="${css.optimizeContainer}">
                 <div>${self._view.optimize}</div>
-                <span class="${css.checkboxText}">Enable Optimization</span>
+                <span class="${css.checkboxText}">启动优化</span>
               </div>
               <div class=${css.hideWarningsContainer}>
                 ${self._view.hideWarningsBox}
-                <span class="${css.autocompileText}">Hide warnings</span>
+                <span class="${css.autocompileText}">隐藏警告</span>
               </div>
             </div>
             ${self._view.compileButton}
@@ -401,7 +401,7 @@ module.exports = class CompileTab {
   _updateVersionSelector () {
     const self = this
     self._view.versionSelector.innerHTML = ''
-    self._view.versionSelector.appendChild(yo`<option disabled selected>Select new compiler version</option>`)
+    self._view.versionSelector.appendChild(yo`<option disabled selected>选择编译版本</option>`)
     self.data.allversions.forEach(build => self._view.versionSelector.appendChild(yo`<option value=${build.path}>${build.longVersion}</option>`))
     self._view.versionSelector.removeAttribute('disabled')
     self._components.queryParams.update({ version: self.data.selectedVersion })

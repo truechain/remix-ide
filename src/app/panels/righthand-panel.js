@@ -95,15 +95,16 @@ module.exports = class RighthandPanel {
         </div>
       </div>`
 
-    const { compile, run, settings, analysis, debug, support, test } = self._components
-    self._components.tabbedMenu.addTab('Compile', 'compileView', compile.render())
-    self._components.tabbedMenu.addTab('Run', 'runView', run.render())
-    self._components.tabbedMenu.addTab('Analysis', 'staticanalysisView', analysis.render())
-    self._components.tabbedMenu.addTab('Testing', 'testView', test.render())
-    self._components.tabbedMenu.addTab('Debugger', 'debugView', debug.render())
-    self._components.tabbedMenu.addTab('Settings', 'settingsView', settings.render())
-    self._components.tabbedMenu.addTab('Support', 'supportView', support.render())
-    self._components.tabbedMenu.selectTabByTitle('Compile')
+    // const { compile, run, settings, analysis, debug, support, test } = self._components
+    const { compile, run } = self._components
+    self._components.tabbedMenu.addTab('编译', 'compileView', compile.render())
+    self._components.tabbedMenu.addTab('运行', 'runView', run.render())
+    // self._components.tabbedMenu.addTab('分析', 'staticanalysisView', analysis.render())
+    // self._components.tabbedMenu.addTab('测试', 'testView', test.render())
+    // self._components.tabbedMenu.addTab('调试器', 'debugView', debug.render())
+    // self._components.tabbedMenu.addTab('设置', 'settingsView', settings.render())
+    // self._components.tabbedMenu.addTab('支持', 'supportView', support.render())
+    self._components.tabbedMenu.selectTabByTitle('编译')
   }
   // showDebugger () {
   //   const self = this

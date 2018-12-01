@@ -369,6 +369,7 @@ class Terminal {
     self._cmdIndex = -1
     self._cmdTemp = ''
 
+    /*
     var intro = yo`<div><div> - Welcome to Remix v0.7.3 - </div><br>
                   <div>You can use this terminal for: </div>
                   <ul class=${css2.ul}>
@@ -383,9 +384,10 @@ class Terminal {
                     <li>Executing common command to interact with the Remix interface (see list of commands above). Note that these commands can also be included and run from a JavaScript script.</li>
                   </ul>
                   </div>`
+        self.commands.html(intro)
+    */
 
     self._shell('remix.help()', self.commands, () => {})
-    self.commands.html(intro)
     return self._view.el
 
     function change (event) {
