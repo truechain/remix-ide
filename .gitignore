@@ -9,4 +9,5 @@ remix
 .DS_Store
 contracts
 TODO
+build/app.js
 .tern-port
