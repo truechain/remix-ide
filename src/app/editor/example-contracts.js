@@ -1,100 +1,94 @@
 'use strict'
 
-var ERC20 = `
-    pragma solidity ^0.5.0;
-
-    library SafeMath {
-        function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-            assert(b <= a);
-            return a - b;
-        }
-
-        function add(uint256 a, uint256 b) internal pure returns (uint256) {
-            uint256 c = a + b;
-            assert(c >= a);
-            return c;
-        }
+var ballot = `pragma solidity ^0.4.0;
+contract Ballot {
+    /// mark
+    struct Voter {
+        uint weight;
+        bool voted;
+        uint8 vote;
+        address delegate;
+    }
+    struct Proposal {
+        uint voteCount;
     }
 
-    contract TestERC20Token {
-        using SafeMath for uint256;
-        string public constant name = "Test ERC20 Token";
-        string public constant symbol = "TET";
-        uint256 public constant decimals = 18;
-        uint256 _totalSupply = 100000000 * 10 ** decimals;
-        address payable public founder = address(0);
-        uint256 public distributed = 0;
+    address chairperson;
+    mapping(address => Voter) voters;
+    Proposal[] proposals;
 
-        mapping (address => uint256) balances;
-        mapping (address => mapping (address => uint256)) allowed;
-
-        event Transfer(address indexed _from, address indexed _to, uint256 _value);
-        event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-
-        constructor() public {
-            founder = msg.sender;
-        }
-
-        function totalSupply() public view returns (uint256 supply) {
-            return _totalSupply;
-        }
-
-        function balanceOf(address _owner) public view returns (uint256 balance) {
-            return balances[_owner];
-        }
-
-        function transfer(address _to, uint256 _value) public returns (bool success) {
-            require (_to != address(0), "");
-            require((balances[msg.sender] >= _value), "");
-            balances[msg.sender] = balances[msg.sender].sub(_value);
-            balances[_to] = balances[_to].add(_value);
-            emit Transfer(msg.sender, _to, _value);
-            return true;
-        }
-
-        function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-            require (_to != address(0), "");
-            require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value, "");
-            balances[_from] = balances[_from].sub(_value);
-            balances[_to] = balances[_to].add(_value);
-            emit Transfer(_from, _to, _value);
-            return true;
-        }
-
-        function approve(address _spender, uint256 _value) public returns (bool success) {
-            allowed[msg.sender][_spender] = _value;
-            emit Approval(msg.sender, _spender, _value);
-            return true;
-        }
-
-        function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
-            return allowed[_owner][_spender];
-        }
-
-        function distribute(address _to, uint256 _amount) public returns (bool success) {
-            require(msg.sender == founder, "");
-            require(distributed.add(_amount) <= _totalSupply, "");
-
-            distributed = distributed.add(_amount);
-            balances[_to] = balances[_to].add(_amount);
-            emit Transfer(address(this), _to, _amount);
-            return true;
-        }
-
-        function changeFounder(address payable newFounder) public {
-            require(msg.sender == founder, "");
-
-            founder = newFounder;
-        }
-
-        function kill() public {
-            require(msg.sender == founder, "");
-
-            selfdestruct(founder);
-        }
+    /// Create a new ballot with $(_numProposals) different proposals.
+    function Ballot(uint8 _numProposals) public {
+        chairperson = msg.sender;
+        voters[chairperson].weight = 1;
+        proposals.length = _numProposals;
     }
+
+    /// Give $(toVoter) the right to vote on this ballot.
+    /// May only be called by $(chairperson).
+    function giveRightToVote(address toVoter) public {
+        if (msg.sender != chairperson || voters[toVoter].voted) return;
+        voters[toVoter].weight = 1;
+    }
+
+    /// Delegate your vote to the voter $(to).
+    function delegate(address to) public {
+        Voter storage sender = voters[msg.sender]; // assigns reference
+        if (sender.voted) return;
+        while (voters[to].delegate != address(0) && voters[to].delegate != msg.sender)
+            to = voters[to].delegate;
+        if (to == msg.sender) return;
+        sender.voted = true;
+        sender.delegate = to;
+        Voter storage delegateTo = voters[to];
+        if (delegateTo.voted)
+            proposals[delegateTo.vote].voteCount += sender.weight;
+        else
+            delegateTo.weight += sender.weight;
+    }
+
+    /// Give a single vote to proposal $(toProposal).
+    function vote(uint8 toProposal) public {
+        Voter storage sender = voters[msg.sender];
+        if (sender.voted || toProposal >= proposals.length) return;
+        sender.voted = true;
+        sender.vote = toProposal;
+        proposals[toProposal].voteCount += sender.weight;
+    }
+
+    function winningProposal() public constant returns (uint8 _winningProposal) {
+        uint256 winningVoteCount = 0;
+        for (uint8 prop = 0; prop < proposals.length; prop++)
+            if (proposals[prop].voteCount > winningVoteCount) {
+                winningVoteCount = proposals[prop].voteCount;
+                _winningProposal = prop;
+            }
+    }
+}`
+
+var ballotTest = `pragma solidity ^0.4.7;
+import "remix_tests.sol"; // this import is automatically injected by Remix.
+import "./ballot.sol";
+
+contract test3 {
+
+    Ballot ballotToTest;
+    function beforeAll () {
+       ballotToTest = new Ballot(2);
+    }
+
+    function checkWinningProposal () public {
+        ballotToTest.vote(1);
+        Assert.equal(ballotToTest.winningProposal(), uint(1), "1 should be the winning proposal");
+    }
+
+    function checkWinninProposalWithReturnValue () public constant returns (bool) {
+        return ballotToTest.winningProposal() == 1;
+    }
+}
 `
 
 module.exports = {
-  ERC20: { name: 'ERC20.sol', content: ERC20 }
+  ballot: { name: 'ballot.sol', content: ballot },
+  ballot_test: { name: 'ballot_test.sol', content: ballotTest }
 }
