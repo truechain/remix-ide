@@ -59,7 +59,8 @@ module.exports = class CompileTab {
       timeout: 300,
       allversions: null,
       selectedVersion: null,
-      baseurl: 'https://solc-bin.ethereum.org/bin'
+      // baseurl: 'https://solc-bin.ethereum.org/bin'
+      baseurl: 'pub'
     }
     self.data.optimize = !!self._components.queryParams.get().optimize
     self._components.queryParams.update({ optimize: self.data.optimize })
@@ -416,7 +417,7 @@ module.exports = class CompileTab {
       if (self.data.selectedVersion.indexOf('soljson') !== 0 || helper.checkSpecialChars(self.data.selectedVersion)) {
         return console.log('loading ' + self.data.selectedVersion + ' not allowed')
       }
-      url = `${self.data.baseurl}/${self.data.selectedVersion}`
+      url = `${self.data.baseurl}/bin/${self.data.selectedVersion}`
     }
     var isFirefox = typeof InstallTrigger !== 'undefined'
     if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
