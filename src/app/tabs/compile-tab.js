@@ -172,7 +172,6 @@ module.exports = class CompileTab {
   render () {
     const self = this
     if (self._view.el) return self._view.el
-
     function onchangeLoadVersion (event) {
       self.data.selectedVersion = self._view.versionSelector.value
       self._updateVersionSelector()
@@ -197,14 +196,14 @@ module.exports = class CompileTab {
 
     self._view.versionSelector = yo`
       <select onchange=${onchangeLoadVersion} class="${css.select}" id="versionSelector" disabled>
-        <option disabled selected>选择编译版本</option>
+        <option disabled selected>Select new compiler version</option>
       </select>`
     if (self.data.allversions && self.data.selectedVersion) self._updateVersionSelector()
     self._view.version = yo`<span id="version"></span>`
 
     self._view.warnCompilationSlow = yo`<i title="Compilation Slow" style="visibility:hidden" class="${css.warnCompilationSlow} fa fa-exclamation-triangle" aria-hidden="true"></i>`
     self._view.compileIcon = yo`<i class="fa fa-refresh ${css.icon}" aria-hidden="true"></i>`
-    self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} 开始编译</div>`
+    self._view.compileButton = yo`<div class="${css.compileButton}" onclick=${compile} id="compile" title="Compile source code">${self._view.compileIcon} Start to compile</div>`
     self._view.autoCompile = yo`<input class="${css.autocompile}" onchange=${updateAutoCompile} id="autoCompile" type="checkbox" title="Auto compile">`
     self._view.hideWarningsBox = yo`<input class="${css.autocompile}" onchange=${hideWarnings} id="hideWarningsBox" type="checkbox" title="Hide warnings">`
     if (self.data.autoCompile) self._view.autoCompile.setAttribute('checked', '')
@@ -220,15 +219,15 @@ module.exports = class CompileTab {
             <div class=${css.checkboxes}>
               <div class="${css.autocompileContainer}">
                 ${self._view.autoCompile}
-                <span class="${css.autocompileText}">自动编译</span>
+                <span class="${css.autocompileText}">Auto compile</span>
               </div>
               <div class="${css.optimizeContainer}">
                 <div>${self._view.optimize}</div>
-                <span class="${css.checkboxText}">启动优化</span>
+                <span class="${css.checkboxText}">Enable Optimization</span>
               </div>
               <div class=${css.hideWarningsContainer}>
                 ${self._view.hideWarningsBox}
-                <span class="${css.autocompileText}">隐藏警告</span>
+                <span class="${css.autocompileText}">Hide warnings</span>
               </div>
             </div>
             ${self._view.compileButton}
@@ -401,7 +400,7 @@ module.exports = class CompileTab {
   _updateVersionSelector () {
     const self = this
     self._view.versionSelector.innerHTML = ''
-    self._view.versionSelector.appendChild(yo`<option disabled selected>选择编译版本</option>`)
+    self._view.versionSelector.appendChild(yo`<option disabled selected>Select new compiler version</option>`)
     self.data.allversions.forEach(build => self._view.versionSelector.appendChild(yo`<option value=${build.path}>${build.longVersion}</option>`))
     self._view.versionSelector.removeAttribute('disabled')
     self._components.queryParams.update({ version: self.data.selectedVersion })

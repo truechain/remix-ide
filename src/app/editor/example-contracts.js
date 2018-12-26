@@ -30,7 +30,7 @@ contract TestERC20Token {
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
-    constructor() public { 
+    constructor() public {
         founder = msg.sender;
     }
 
@@ -79,12 +79,12 @@ contract TestERC20Token {
         emit Transfer(address(this), _to, _amount);
         return true;
     }
-	
+
     function distributeMultiple(address[] memory _tos, uint256[] memory _values) public returns (bool success) {
         require(msg.sender == founder, "");
-		
+
         uint256 total = 0;
-        uint256 i = 0; 
+        uint256 i = 0;
         for (i = 0; i < _tos.length; i++) {
             total = total.add(_values[i]);
         }
